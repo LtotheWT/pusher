@@ -106,7 +106,7 @@ class Pusher {
     validateSocketId(options.socketId);
     TriggerBody body = new TriggerBody(
         name: event,
-        data: data.toString(),
+        data: json.encode(data),
         channels: channels,
         socketId: options.socketId);
     return _executeTrigger(channels, event, body);

@@ -11,7 +11,9 @@ class PusherOptions {
 
   String _cluster;
 
-  PusherOptions({bool encrypted: false, int port, String cluster}) {
+  String _host;
+
+  PusherOptions({bool encrypted: false, int port, String cluster, String host}) {
     this._encrypted = encrypted;
 
     if (port != null) this._port = port;
@@ -19,6 +21,8 @@ class PusherOptions {
     if (cluster != null) this._cluster = cluster;
 
     if (encrypted && port == null) this._port = defaultHttpsPort;
+
+    _host = host == null ? !hasCluster ? defaultHost : "api-${_cluster}.pusher.com": host;
   }
 
   /// Indicates whether calls to the Pusher REST API are over HTTP or HTTPS.
@@ -31,11 +35,11 @@ class PusherOptions {
 
   bool get hasCluster => _cluster != null;
 
-  String get host => !hasCluster ? defaultHost : "api-${_cluster}.pusher.com";
+  String get host =>!hasCluster ? defaultHost : "api-${_cluster}.pusher.com";
 
   String getBaseUrl() {
     String schema = encrypted ? 'https' : 'http';
     String port = _port == 80 ? '' : ":${_port}";
-    return "$schema://$host$port";
+    return "$schema://$_host$port";
   }
 }
