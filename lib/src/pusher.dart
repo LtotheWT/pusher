@@ -1,4 +1,7 @@
-import 'package:http/http.dart' show Request, StreamedResponse;
+import 'dart:io';
+
+import 'package:http/http.dart' show Client, Request, StreamedResponse;
+import 'package:http/io_client.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:collection';
@@ -12,6 +15,15 @@ import 'options.dart';
 /// Provides access to functionality within the Pusher service such as Trigger to trigger events
 /// and authenticating subscription requests to private and presence channels.
 class Pusher {
+  Client myClient() {
+    var ioClient = new HttpClient()
+      ..badCertificateCallback = _certificateCheck;
+
+    return new IOClient(ioClient);
+  }
+  static bool _certificateCheck(X509Certificate cert, String host, int port) =>
+      host == '192.168.0.36';
+
   String _id;
 
   String _key;
@@ -88,7 +100,9 @@ class Pusher {
     parameters = (parameters != null) ? parameters : new Map<String, String>();
     Request request =
         _createAuthenticatedRequest('GET', resource, parameters, null);
-    StreamedResponse response = await request.send();
+
+//    StreamedResponse response = await request.send();
+    StreamedResponse response = await myClient().send(request);
     return new Response(
         response.statusCode, await response.stream.bytesToString());
   }
@@ -116,7 +130,8 @@ class Pusher {
       List<String> channels, String event, TriggerBody body) async {
     Request request =
         _createAuthenticatedRequest('POST', "/events", null, body);
-    StreamedResponse response = await request.send();
+//    StreamedResponse response = await request.send();
+    StreamedResponse response = await myClient().send(request);
     return new Response(
         response.statusCode, await response.stream.bytesToString());
   }
@@ -155,6 +170,7 @@ class Pusher {
 
     Uri uri = Uri.parse(
         "${_options.getBaseUrl()}$path?$queryString&auth_signature=$authSignature");
+
     Request request = new Request(method, uri);
     request.headers['Content-Type'] = 'application/json';
     if (body != null) {
@@ -162,4 +178,5 @@ class Pusher {
     }
     return request;
   }
+
 }
