@@ -21,8 +21,9 @@ class Pusher {
 
     return new IOClient(ioClient);
   }
-  static bool _certificateCheck(X509Certificate cert, String host, int port) =>
-      host == '192.168.0.36';
+
+  bool _certificateCheck(X509Certificate cert, String host, int port) =>
+      host == _selfHost;
 
   String _id;
 
@@ -32,11 +33,14 @@ class Pusher {
 
   PusherOptions _options;
 
-  Pusher(String id, String key, String secret, [PusherOptions options]) {
+  String _selfHost;
+
+  Pusher(String id, String key, String secret, String selfHost, [PusherOptions options]) {
     this._id = id;
     this._secret = secret;
     this._key = key;
     this._options = options == null ? new PusherOptions() : options;
+    this._selfHost = selfHost == null ? "": selfHost;
   }
 
   /// Authenticates the subscription request for a presence channel.

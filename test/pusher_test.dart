@@ -132,7 +132,7 @@ void main() {
     Pusher pusher;
 
     setUp(() {
-      pusher = new Pusher(pusherAppId, pusherAppKey, pusherAppSecret);
+      pusher = new Pusher(pusherAppId, pusherAppKey, pusherAppSecret, null);
     });
 
     test('Should get `/channels`', () async {
@@ -175,7 +175,7 @@ void main() {
 
     test('Should authenticate socketId', () {
       String key = 'thisisaauthkey';
-      Pusher instance = new Pusher('1', key, 'thisisasecret');
+      Pusher instance = new Pusher('1', key, 'thisisasecret', null);
       String auth = instance.authenticate('test_channel', '74124.3251944');
       String expected =
           '{"auth":"$key:f8390ffe4df18cc755d3191b9db75182c71354e0b3ad7be1d186ac86f3c0fc4b"}';
@@ -184,7 +184,7 @@ void main() {
 
     test('Should authenticate presence', () {
       String key = 'thisisaauthkey';
-      Pusher instance = new Pusher('1', key, 'thisisasecret');
+      Pusher instance = new Pusher('1', key, 'thisisasecret', null);
       String channel = 'presence-test_channel';
       String socketId = '74124.3251944';
       String userId = "1";
